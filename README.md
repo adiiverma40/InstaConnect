@@ -52,5 +52,5 @@ InstaConnect is a social media platform inspired by Instagram, built with React 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/instaconnect.git
+   git clone https://github.com/yourusername/InstaConnect.git
    cd instaconnect
