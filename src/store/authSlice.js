@@ -5,7 +5,10 @@ const initialState = {
     status : false ,
     username: '' ,
     bio:'' ,
-    databaseId :''
+    databaseId :'',
+    profileImageId:'',
+    profileImageUrl:''
+
 }
 
 export const AuthSlice = createSlice({
@@ -24,9 +27,13 @@ export const AuthSlice = createSlice({
           state.username = action.payload.username
           state.bio = action.payload.bio
           state.databaseId = action.payload.id
+        },
+        profileImage : (state , action) =>{
+          state.profileImageId = action.payload.profileImageId
+          state.profileImageUrl = action.payload.profileImageUrl
         }
       }
 })
 
-export const {login , logout , userdetails} = AuthSlice.actions
+export const {login ,profileImage, logout , userdetails} = AuthSlice.actions
 export default AuthSlice.reducer

@@ -2,8 +2,12 @@ import React, { useEffect, useState } from "react";
 import { HeadlessButton, LeftMenu, Input, Button } from "../Components";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { updateUserDetails, AppwriteUpdateName } from "../appwrite/appwrite";
-import { userdetails } from "../store/authSlice";
+import {
+  updateUserDetails,
+  AppwriteUpdateName,
+  getProfileImage,
+} from "../appwrite/appwrite";
+import { profileImage, userdetails } from "../store/authSlice";
 import ReactDrop from "../Components/ReactDrop";
 
 function EditProfile() {
@@ -15,6 +19,7 @@ function EditProfile() {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [uploadImage, setUploadImage] = useState(false);
+  const [uploadBio, setUploadBio] = useState("");
   useEffect(() => {
     if (selector.username == "") {
       return;
@@ -30,21 +35,44 @@ function EditProfile() {
   };
 
   async function handleSubmit() {
-    console.log(`username : ${username} name : ${name}  bio : ${bio}`);
+    const formattedBio = bio.replace(/\n/g, "<br/>");
+    console.log(`username : ${username} name : ${name}  bio : ${formattedBio}`);
     console.log("update user detail");
-
-    let promise = await updateUserDetails(selector.databaseId, username, bio);
-    console.log("UPDATE NAME");
-
-    let updateName = await AppwriteUpdateName(name);
-    console.log(promise, updateName);
-    dispatch(
-      userdetails({
-        username: promise.username,
-        bio: promise.bio,
-        id: promise.$id,
-      })
-    );
+    setUploadBio(formattedBio);
+    if (selector.profileImageUrl === "") {
+      let promise = await updateUserDetails(
+        selector.databaseId,
+        username,
+        formattedBio
+      );
+      console.log("UPDATE NAME");
+      let updateName = await AppwriteUpdateName(name);
+      console.log(promise, updateName);
+      dispatch(
+        userdetails({
+          username: promise.username,
+          bio: promise.bio,
+          id: promise.$id,
+        })
+      );
+    } else {
+      let promise = await updateUserDetails(
+        selector.databaseId,
+        username,
+        bio,
+        selector.profileImageUrl
+      );
+      console.log("UPDATE NAME");
+      let updateName = await AppwriteUpdateName(name);
+      console.log(promise, updateName);
+      dispatch(
+        userdetails({
+          username: promise.username,
+          bio: promise.bio,
+          id: promise.$id,
+        })
+      );
+    }
 
     navigate("/profile");
   }
@@ -52,8 +80,37 @@ function EditProfile() {
   function handleUpload() {
     setUploadImage(true);
   }
-  function handleClose(){
-    setUploadImage(false)
+  function handleClose() {
+    setUploadImage(false);
+  }
+
+  useEffect(() => {
+    const fetchProfileImage = async () => {
+      try {
+        const promise = await getProfileImage(selector.profileImageId);
+        console.log(promise);
+        const id = selector.profileImageId;
+        console.log("app", promise.href);
+        dispatch(
+          profileImage({ profileImageId: id, profileImageUrl: promise.href })
+        );
+      } catch (error) {
+        console.error("Error fetching profile image:", error);
+      }
+    };
+
+    if (selector.profileImageId && selector.profileImageId !== "") {
+      fetchProfileImage();
+      setUploadImage(false);
+    }
+    if (selector.profileImageId && selector.profileImageId !== "") {
+      setUploadImage(false);
+    }
+  }, [selector.profileImageId]);
+
+  function handleKeyDown() {
+    const formattedBio = bio.replace(/\n/g, "<br/>");
+    setUploadBio(formattedBio);
   }
 
   return (
@@ -65,7 +122,7 @@ function EditProfile() {
             <p className="font-bold text-lg text-center mt-8">Edit Profile</p>
             <div className="mx-auto mt-8 bg-gray-300 rounded-lg w-1/2 h-24 flex justify-center items-center">
               <img
-                src="https://placehold.co/400x400/000000/FFF"
+                src={selector.profileImageUrl}
                 className="w-20 h-20"
                 style={{ borderRadius: "50%" }}
               />
@@ -105,6 +162,7 @@ function EditProfile() {
                   maxLength={maxChars}
                   rows="2"
                   cols="50"
+                  onKeyDown={handleKeyDown}
                   placeholder="Write your bio here..."
                   className="w-full p-2 border rounded-lg"
                   style={{ resize: "none" }}
@@ -123,9 +181,11 @@ function EditProfile() {
 
       {uploadImage ? (
         <div className="w-full h-1/2 absolute top-0">
-          <span 
-          onClick={handleClose}
-          className="cursor-pointer text-white z-50 absolute top-4 text-xl font-bold" style={{left:'95%'}}>
+          <span
+            onClick={handleClose}
+            className="cursor-pointer text-white z-50 absolute top-4 text-xl font-bold"
+            style={{ left: "95%" }}
+          >
             X
           </span>
           <ReactDrop />

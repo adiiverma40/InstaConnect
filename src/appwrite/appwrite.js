@@ -1,13 +1,13 @@
 // import { Query } from 'node-appwrite';0
-import { Client, Account, ID, Databases , Query } from "appwrite";
+import { Client, Account, ID, Databases , Query, Storage } from "appwrite";
 import conf from "../conf/conf";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 export const clinet = new Client();
 clinet.setEndpoint(conf.appwriteUrl).setProject(conf.appwriteProject);
 
 export const account = new Account(clinet);
-
 const databases = new Databases(clinet)
+const storage = new Storage(clinet)
 
 //Function
 //Login
@@ -88,7 +88,7 @@ async function getUserDetails(email) {
 
 //update userdetails 
 
-async function updateUserDetails(id ,  username , bio) {
+async function updateUserDetails(id ,  username , bio , imageUrl) {
   let promise = await databases.updateDocument(
     conf.appwriteDatabase ,
     conf.appwriteUsernamecollection,
@@ -96,10 +96,32 @@ async function updateUserDetails(id ,  username , bio) {
     {
       username : username ,
       bio : bio,
+      profileImage: imageUrl,
     }
   )
   return promise
 }
 
 
-export {  createUserDetails ,getUserDetails,AppwriteLogin,AppwriteLogout , AppwriteSignUp, AppwriteUpdateName, AppwriteGet  , updateUserDetails};
+// upload image to appwrite bucket 
+ async function uploadProfileImage(file){
+  const promise = storage.createFile(
+    conf.appwriteBucket,
+    ID.unique(),
+    file
+  )
+  return promise
+ }
+
+ //get Image from bucket
+ async function getProfileImage(id) {
+  const promise = await storage.getFileView(
+    conf.appwriteBucket,
+    id
+  )
+  return promise
+ }
+
+
+
+export {uploadProfileImage, getProfileImage ,createUserDetails ,getUserDetails,AppwriteLogin,AppwriteLogout , AppwriteSignUp, AppwriteUpdateName, AppwriteGet  , updateUserDetails};

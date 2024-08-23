@@ -9,19 +9,19 @@ function LeftMenu() {
   const selector = useSelector((state) => state.auth);
   const [profilePic, setProfilePic] = useState("");
   const navigate = useNavigate();
-  const [popUp , setPopUp] = useState(false)
+  const [popUp, setPopUp] = useState(false);
 
-  function popUpfn(){
-    setPopUp(true)
+  function popUpfn() {
+    setPopUp(true);
   }
- 
+
   useEffect(() => {
-    if (selector.status && selector.userData?.photoUrl) {
-      setProfilePic(selector.userData.photoUrl);
-      console.log(selector.userData);
-    } else {
-      setProfilePic("");
-    }
+   if(selector.profileImageUrl !== "") {
+    setProfilePic(selector.profileImageUrl)
+   }
+   else{
+    setProfilePic("https://placehold.co/400x400/000000/FFF")
+   }
   }, [selector.status, selector.userData?.photoUrl, navigate]);
 
   return (
@@ -92,25 +92,51 @@ function LeftMenu() {
               Create{" "}
             </NavLink>{" "}
           </li>
-          <li className="mx-8 mt-2 rounded p-3 transition-colors duration-200 hover:bg-gray-300 hover:cursor-pointer">
-            <NavLink to={"/profile"} className="flex items-center">
-              <img
+          {/* <li className="mx-8 mt-2 rounded p-3 transition-colors duration-200 hover:bg-gray-300 hover:cursor-pointer">
+            <NavLink to={"/profile"} className="flex items-center" 
+            
+            >
+              <div 
+            style={{backgroundImage : `url(${profilePic})` , width:'16%' , height: "16%"  }}>
+
+              </div>
+              {/* <img
                 src={profilePic}
-                style={{borderRadius: "50%" , width:"16%"}}
+                style={{ borderRadius: "50%", width: "16%" }}
                 className="mx-2  text-gray-600 transition-colors duration-300 hover:text-blue-500"
-              />{" "}
+              />{" "} 
               Profile{" "}
             </NavLink>{" "}
-          </li>
+          </li> */}
+
+<li className="mx-8 mt-2 rounded p-3 transition-colors duration-200 hover:bg-gray-300 hover:cursor-pointer">
+  <NavLink to={"/profile"} className="flex items-center">
+    <img
+      src={profilePic}
+      alt="Profile"
+      style={{ 
+        width: "40px", // Ensure equal width and height
+        height: "40px", 
+        borderRadius: "50%", // Makes the image circular
+        objectFit: "cover"  // Ensures the image covers the container without stretching
+      }}
+      className="mx-2 text-gray-600 transition-colors duration-300 hover:text-blue-500"
+    />
+    Profile
+  </NavLink>
+</li>
+
         </ul>
       </div>
-      
-      <div  className=" mx-8  rounded p-3 transition-colors duration-200   hover:cursor-pointer">
-     
-       <PopupOver> <span className="hover:bg-gray-300 p-3 text-lg"><FontAwesomeIcon icon={icons.menu}/> Menu </span></PopupOver>
-       
-       </div> </div>
-    
+      <div className=" mx-8  rounded p-3 transition-colors duration-200   hover:cursor-pointer">
+        <PopupOver>
+          {" "}
+          <span className="hover:bg-gray-300 p-3 text-lg">
+            <FontAwesomeIcon icon={icons.menu} /> Menu{" "}
+          </span>
+        </PopupOver>
+      </div>{" "}
+    </div>
   );
 }
 

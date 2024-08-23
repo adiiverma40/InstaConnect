@@ -3,10 +3,10 @@ import { HeadlessButton, LeftMenu } from "../Components";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails } from "../appwrite/appwrite";
-import { userdetails } from "../store/authSlice";
+import { profileImage, userdetails } from "../store/authSlice";
 
 function Profile() {
-  const [username, setUsername] = useState("theuthopian_mix");
+  const [username, setUsername] = useState("");
   const [bio , setBio] = useState("bio")
   const navigate = useNavigate()
   const selector = useSelector((state) => state.auth)
@@ -16,6 +16,8 @@ function Profile() {
         let promise = await getUserDetails(selector.userData.email)
         console.log(promise);
         dispatch(userdetails({username: promise.username , bio : promise.bio , id : promise.$id}))
+        let id = selector.profileImageId
+        dispatch(profileImage({profileImageId : id , profileImageUrl : promise.profileImage}))
         setUsername(promise.username)
         setBio(promise.bio)
       }
@@ -34,7 +36,7 @@ function Profile() {
         <div className="border flex pt-12 justify-center border-black w-full h-1/2">
           <div className="mx-12">
             <img
-              src="https://placehold.co/400x400/000000/FFF"
+              src={selector.profileImageUrl}
               className=" w-40 h-40 "
               style={{ borderRadius: "50%" }}
               alt=""
@@ -53,7 +55,7 @@ function Profile() {
             
             <p>
               <b>{selector.userData.name}</b>
-              <p>
+              <p style={{ whiteSpace: "pre-wrap" }}>
                {bio}
               </p>
             </p>
