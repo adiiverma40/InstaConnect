@@ -20,6 +20,7 @@ function Profile() {
           username: promise.username,
           bio: promise.bio,
           id: promise.$id,
+          name:promise.name
         })
       );
       let id = selector.profileImageId;
@@ -73,7 +74,7 @@ function Profile() {
             </div>
 
             <p>
-              <b>{selector.userData.name}</b>
+              <b>{selector.name}</b>
               <p style={{ whiteSpace: "pre-wrap" }}>{bio}</p>
             </p>
           </div>

@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import {createBrowserRouter, createRoutesFromElements ,Route,RouterProvider} from 'react-router-dom'
-import {Login , SignUp, Home, Profile} from "./pages/index.js"
+import {Login , SignUp, Home, Profile, Search} from "./pages/index.js"
 import EditProfile from './pages/EditProfile.jsx'
 
 
@@ -20,6 +20,7 @@ const router = createBrowserRouter(
       <Route path='/home' element={<Home/>}/>
       <Route path='/profile' element={<Profile/>}/>
       <Route path='/edit' element={<EditProfile/>}/>
+      <Route path='/search' element={<Search/>}/>
     </Route>
   )
 )

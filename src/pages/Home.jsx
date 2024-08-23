@@ -6,6 +6,18 @@ import { useNavigate } from 'react-router-dom';
 function Home() {
   const selector = useSelector((state) => state.auth)
   const navigate = useNavigate()
+
+//TODO: useEffect here to set the profile details from here
+//TODO: or just get profile Image
+
+
+
+
+
+
+
+
+  
   useEffect(()=>{
     if(selector.status) return 
     else navigate('/')

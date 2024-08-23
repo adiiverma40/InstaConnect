@@ -8,6 +8,8 @@ function App() {
   const dispatch = useDispatch();
   const selector = useSelector((state) => state.auth);
   useEffect(()=>{
+    console.log("app");
+    
     async function userInfo() {
       let promise = await getUserDetails(selector.userData.email)
       console.log(promise);

@@ -4,6 +4,7 @@ const initialState = {
     userData : null ,
     status : false ,
     username: '' ,
+    name:'',
     bio:'' ,
     databaseId :'',
     profileImageId:'',
@@ -27,10 +28,12 @@ export const AuthSlice = createSlice({
             state.databaseId=''
             state.profileImageId = ''
             state.profileImageUrl=''
+            state.name =""
         },
         userdetails : (state , action) => {
           state.username = action.payload.username
           state.bio = action.payload.bio
+          state.name = action.payload.name
           state.databaseId = action.payload.id
         },
         profileImage : (state , action) =>{

@@ -20,7 +20,6 @@ function Login() {
       navigate("/home")
     }
   }
-
   useEffect(()=>{
       async function checkLogin() {
         const Promise = await AppwriteGet()

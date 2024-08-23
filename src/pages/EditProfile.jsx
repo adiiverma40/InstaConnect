@@ -24,7 +24,7 @@ function EditProfile() {
     if (selector.username == "") {
       return;
     } else {
-      setName(selector.userData.name);
+      setName(selector.name);
       setUsername(selector.username);
       setBio(selector.bio);
     }
@@ -43,7 +43,8 @@ function EditProfile() {
       let promise = await updateUserDetails(
         selector.databaseId,
         username,
-        formattedBio
+        formattedBio,
+        name
       );
       console.log("UPDATE NAME");
       let updateName = await AppwriteUpdateName(name);
@@ -53,6 +54,7 @@ function EditProfile() {
           username: promise.username,
           bio: promise.bio,
           id: promise.$id,
+          name:promise.name
         })
       );
     } else {
@@ -60,7 +62,8 @@ function EditProfile() {
         selector.databaseId,
         username,
         bio,
-        selector.profileImageUrl
+        selector.profileImageUrl,
+        name
       );
       console.log("UPDATE NAME");
       let updateName = await AppwriteUpdateName(name);
@@ -70,6 +73,7 @@ function EditProfile() {
           username: promise.username,
           bio: promise.bio,
           id: promise.$id,
+          name: promise.name
         })
       );
     }
@@ -128,7 +132,7 @@ function EditProfile() {
               />
               <div className="mx-4">
                 <p className="font-bold text-base">{selector.username}</p>
-                <p className="font-thin-">{selector.userData.name}</p>
+                <p className="font-thin-">{selector.name}</p>
               </div>
               <HeadlessButton
                 onclick={handleUpload}

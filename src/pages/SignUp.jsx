@@ -14,18 +14,15 @@ function SignUp() {
   async function createUser(data) {
     let promise = await AppwriteSignUp(data.email , data.password)
     let updateName = await AppwriteUpdateName(data.name)
-    let updateDetails = await createUserDetails(data.username , "", data.email)
+    let updateDetails = await createUserDetails(data.username , "", data.email , data.name)
     console.log("username changed :" , updateDetails );
     dispatch(profileImage({profileImageId : "" , profileImageUrl:""}))
-
     if(updateName){
       dispatch((login({userData : promise})))
-
       navigate("/home")
     }
     
   }
-  
   useEffect(()=>{
     async function checkLogin() {
       const Promise = await AppwriteGet()
