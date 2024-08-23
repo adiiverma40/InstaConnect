@@ -122,6 +122,9 @@ async function updateUserDetails(id ,  username , bio , imageUrl) {
   return promise
  }
 
+ //TODO: make a search option with the help of debounce and appwrite list documents
+ 
+
 
 
 export {uploadProfileImage, getProfileImage ,createUserDetails ,getUserDetails,AppwriteLogin,AppwriteLogout , AppwriteSignUp, AppwriteUpdateName, AppwriteGet  , updateUserDetails};

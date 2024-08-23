@@ -1,7 +1,7 @@
 import React , {useEffect} from "react";
 
 import {useDispatch, useSelector} from "react-redux"
-import {login, logout} from "../store/authSlice"
+import {login, logout, profileImage, userdetails} from "../store/authSlice"
 import { NavLink, useNavigate } from "react-router-dom";
 import { Input, Button } from "../Components/index";
 import { useForm } from "react-hook-form";
@@ -16,9 +16,11 @@ function SignUp() {
     let updateName = await AppwriteUpdateName(data.name)
     let updateDetails = await createUserDetails(data.username , "", data.email)
     console.log("username changed :" , updateDetails );
-    
+    dispatch(profileImage({profileImageId : "" , profileImageUrl:""}))
+
     if(updateName){
       dispatch((login({userData : promise})))
+
       navigate("/home")
     }
     

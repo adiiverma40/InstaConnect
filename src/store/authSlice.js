@@ -22,6 +22,11 @@ export const AuthSlice = createSlice({
         logout: (state, action) =>{
             state.userData = null,
             state.status = false
+            state.username = ''
+            state.bio = ''
+            state.databaseId=''
+            state.profileImageId = ''
+            state.profileImageUrl=''
         },
         userdetails : (state , action) => {
           state.username = action.payload.username

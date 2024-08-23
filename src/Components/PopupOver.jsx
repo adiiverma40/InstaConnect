@@ -13,7 +13,7 @@ export default function PopupOver({children}) {
     navigate('/')
   }
   return (
-    <div className=" flex  w-full justify-center pt-20">
+    <div className=" flex  w-full ">
       <div className="flex gap-8">
         <Popover>
           <PopoverButton className="block text-sm/6 font-semibold text-black focus:outline-none data-[active]:text-black data-[hover]:text-black data-[focus]:outline-1 data-[focus]:outline-white">

@@ -11,131 +11,74 @@ function LeftMenu() {
   const navigate = useNavigate();
   const [popUp, setPopUp] = useState(false);
 
+  //Menu arry
+  const menuItems = [
+    { to: "/home", icon: icons.house, text: "Home" },
+    { to: "/search", icon: icons.search, text: "Search" },
+    { to: "/explore", icon: icons.explore, text: "Explore" },
+    { to: "/reels", icon: icons.reels, text: "Reels" },
+    { to: "/messages", icon: icons.chats, text: "Messages" },
+    { to: "/notifications", icon: icons.notification, text: "Notifications" },
+    { to: "/create", icon: icons.create, text: "Create" },
+  ];
+
   function popUpfn() {
     setPopUp(true);
   }
 
   useEffect(() => {
-   if(selector.profileImageUrl !== "") {
-    setProfilePic(selector.profileImageUrl)
-   }
-   else{
-    setProfilePic("https://placehold.co/400x400/000000/FFF")
-   }
-  }, [selector.status, selector.userData?.photoUrl, navigate]);
+    if (selector.profileImageUrl !== "") {
+      setProfilePic(selector.profileImageUrl);
+    } else {
+      setProfilePic("https://placehold.co/400x400/000000/FFF");
+    }
+  }, [selector.status, selector.profileImageUrl, navigate]);
 
   return (
-    <div className=" h-screen border-r border-black" style={{ width: "16%" }}>
+    <div className=" h-screen border-r border-dashed  border-black" style={{ width: "16%" }}>
       <h2 className="pt-12 mx-8 font-bold text-lg">InstaConnect</h2>
       <div>
         <ul>
-          <li className=" mx-8 mt-2 rounded p-3 transition-colors duration-200 hover:bg-gray-300 hover:cursor-pointer">
-            <NavLink to={"/home"} className="flex items-center">
-              <FontAwesomeIcon
-                className="mx-2 text-gray-600 transition-colors duration-300 hover:text-blue-500"
-                icon={icons.house}
-              />{" "}
-              Home{" "}
-            </NavLink>{" "}
-          </li>
-          <li className=" mx-8 mt-2 rounded p-3 transition-colors duration-200 hover:bg-gray-300 hover:cursor-pointer">
-            <NavLink className="flex items-center">
-              <FontAwesomeIcon
-                className="mx-2 text-gray-600 transition-colors duration-300 hover:text-blue-500"
-                icon={icons.search}
-              />{" "}
-              Search{" "}
-            </NavLink>{" "}
-          </li>
-          <li className=" mx-8 mt-2 rounded p-3 transition-colors duration-200 hover:bg-gray-300 hover:cursor-pointer">
-            <NavLink className="flex items-center">
-              <FontAwesomeIcon
-                className="mx-2 text-gray-600 transition-colors duration-300 hover:text-blue-500"
-                icon={icons.explore}
-              />
-              Explore{" "}
-            </NavLink>{" "}
-          </li>
-          <li className=" mx-8 mt-2 rounded p-3 transition-colors duration-200 hover:bg-gray-300 hover:cursor-pointer">
-            <NavLink className="flex items-center">
-              <FontAwesomeIcon
-                className="mx-2 text-gray-600 transition-colors duration-300 hover:text-blue-500"
-                icon={icons.reels}
-              />{" "}
-              Reels{" "}
-            </NavLink>{" "}
-          </li>
-          <li className=" mx-8 mt-2 rounded p-3 transition-colors duration-200 hover:bg-gray-300 hover:cursor-pointer">
-            <NavLink className="flex items-center">
-              <FontAwesomeIcon
-                className="mx-2 text-gray-600 transition-colors duration-300 hover:text-blue-500"
-                icon={icons.chats}
-              />{" "}
-              Messages{" "}
-            </NavLink>{" "}
-          </li>
-          <li className="mx-8 mt-2 rounded p-3 transition-colors duration-200 hover:bg-gray-300 hover:cursor-pointer">
-            <NavLink className="flex items-center">
-              <FontAwesomeIcon
-                className="mx-2 text-gray-600 transition-colors duration-300 hover:text-blue-500"
-                icon={icons.notification}
-              />{" "}
-              Notifications{" "}
-            </NavLink>{" "}
-          </li>
-          <li className=" mx-8 mt-2 rounded p-3 transition-colors duration-200 hover:bg-gray-300 hover:cursor-pointer">
-            <NavLink className="flex items-center">
-              <FontAwesomeIcon
-                className="mx-2 text-gray-600 transition-colors duration-300 hover:text-blue-500 border-2 p-1 rounded border-black"
-                icon={icons.create}
-              />{" "}
-              Create{" "}
-            </NavLink>{" "}
-          </li>
-          {/* <li className="mx-8 mt-2 rounded p-3 transition-colors duration-200 hover:bg-gray-300 hover:cursor-pointer">
-            <NavLink to={"/profile"} className="flex items-center" 
-            
+          {menuItems.map((item, index) => (
+            <li
+              key={index}
+              className="mx-8 text-black font-semibold text-lg mt-2 rounded p-3 transition-colors duration-200 hover:bg-gray-300 hover:cursor-pointer"
             >
-              <div 
-            style={{backgroundImage : `url(${profilePic})` , width:'16%' , height: "16%"  }}>
+              <NavLink to={item.to} className="flex items-center">
+                <FontAwesomeIcon
+                  className="mx-2 text-gray-600 transition-colors duration-300 hover:text-blue-500"
+                  icon={item.icon}
+                />
+                {item.text}
+              </NavLink>
+            </li>
+          ))}
 
-              </div>
-              {/* <img
+          <li className="mx-8 mt-2  text-black font-semibold text-lg rounded p-3 transition-colors duration-200 hover:bg-gray-300 hover:cursor-pointer">
+            <NavLink to={"/profile"} className="flex items-center">
+              <img
                 src={profilePic}
-                style={{ borderRadius: "50%", width: "16%" }}
-                className="mx-2  text-gray-600 transition-colors duration-300 hover:text-blue-500"
-              />{" "} 
-              Profile{" "}
-            </NavLink>{" "}
-          </li> */}
-
-<li className="mx-8 mt-2 rounded p-3 transition-colors duration-200 hover:bg-gray-300 hover:cursor-pointer">
-  <NavLink to={"/profile"} className="flex items-center">
-    <img
-      src={profilePic}
-      alt="Profile"
-      style={{ 
-        width: "40px", // Ensure equal width and height
-        height: "40px", 
-        borderRadius: "50%", // Makes the image circular
-        objectFit: "cover"  // Ensures the image covers the container without stretching
-      }}
-      className="mx-2 text-gray-600 transition-colors duration-300 hover:text-blue-500"
-    />
-    Profile
-  </NavLink>
-</li>
-
+                alt="Profile"
+                style={{
+                  width: "40px", // Ensure equal width and height
+                  height: "40px",
+                  borderRadius: "50%", // Makes the image circular
+                  objectFit: "cover", // Ensures the image covers the container without stretching
+                }}
+                className="mx-2 text-gray-600 transition-colors duration-300 hover:text-blue-500"
+              />
+              Profile
+            </NavLink>
+          </li>
         </ul>
       </div>
-      <div className=" mx-8  rounded p-3 transition-colors duration-200   hover:cursor-pointer">
+      <div className="  mt-16 mx-8 hover:bg-gray-300  rounded p-3 transition-colors duration-200   hover:cursor-pointer">
         <PopupOver>
-          {" "}
-          <span className="hover:bg-gray-300 p-3 text-lg">
-            <FontAwesomeIcon icon={icons.menu} /> Menu{" "}
+          <span className="p-3  text-2xl">
+            <FontAwesomeIcon icon={icons.menu} /> Menu
           </span>
         </PopupOver>
-      </div>{" "}
+      </div>
     </div>
   );
 }
