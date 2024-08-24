@@ -1,12 +1,12 @@
 
-
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { icons } from "./icons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import PopupOver from "../PopupOver";
 import Search from "../../pages/Search";
+import { toggleSearch, viewUser } from "../../store/authSlice";
 
 function LeftMenu() {
   const selector = useSelector((state) => state.auth);
@@ -14,7 +14,24 @@ function LeftMenu() {
   const [activeMenu, setActiveMenu] = useState(""); // State to track the active menu
   const navigate = useNavigate();
   const [showSearch, setShowSearch] = useState(false);
+  const dispatch = useDispatch()
 
+  useEffect(() =>{
+    console.log("toggle search");
+    
+    if(selector.isSearch){
+      setShowSearch(true)
+      console.log("true");
+      
+    }else {setShowSearch(false)
+      console.log("false");
+      
+    }
+
+  } , [selector.isSearch])
+
+
+  
   useEffect(() => {
     if (selector.profileImageUrl !== "") {
       setProfilePic(selector.profileImageUrl);
@@ -34,27 +51,25 @@ function LeftMenu() {
   ];
 
   // Function to handle menu click
-  // const handleMenuClick = (menu) => {
-  //   if (menu === "Search") {
-  //     setShowSearch(true); // Set to true to show search component
-  //     setActiveMenu("Search");
-  //   } else {
-  //     setActiveMenu(""); // Reset the state when other menus are clicked
-  //     setShowSearch(false); // Hide search component
-  //   }
-  // };
-
-const handleMenuClick = (menu) => {
-  if (menu === "Search") {
-    setShowSearch(prev => !prev); // Toggle the visibility of the search component
-    setActiveMenu(prev => (prev === "Search" ? "" : "Search")); // Toggle active menu
-  } else {
-    setActiveMenu(""); // Reset the state when other menus are clicked
-    setShowSearch(false); // Hide search component
+  const handleMenuClick = (menu) => {
+    if (menu === "Search") {
+      setShowSearch((prev) => !prev); // Toggle the visibility of the search component
+      setActiveMenu((prev) => (prev === "Search" ? "" : "Search")); // Toggle active menu
+    } else {
+      setActiveMenu(""); // Reset the state when other menus are clicked
+      setShowSearch(false); // Hide search component
+    }
+  };
+ 
+  function toProfile(){
+    dispatch(toggleSearch({search : false}))
+    dispatch(viewUser({viewUserId : selector.username }))
+    navigate(`/${selector.username}`)
+    
   }
-};
 
 
+  
   return (
     <div
       className="relative h-screen border-r border-dashed border-black"
@@ -79,8 +94,13 @@ const handleMenuClick = (menu) => {
             </li>
           ))}
 
+          {/* Profile Menu Item */}
           <li className="mx-8 mt-2 text-black font-semibold text-lg rounded p-3 transition-colors duration-200 hover:bg-gray-300 hover:cursor-pointer">
-            <NavLink to={"/profile"} className="flex items-center">
+            <NavLink
+            onClick={toProfile}
+            // Use the username dynamically from Redux store
+              className="flex items-center"
+            >
               <img
                 src={profilePic}
                 alt="Profile"
@@ -108,8 +128,8 @@ const handleMenuClick = (menu) => {
 
       {/* Conditionally render the Search component with animation */}
       <div
-         className={`absolute top-0 left-full w-96 z-10 transition-transform ${
-          showSearch ? 'animate-slide-in-left' : 'animate-slide-out-left'
+        className={`absolute top-0 left-full w-96 z-10 transition-transform ${
+          showSearch ? "animate-slide-in-left" : "animate-slide-out-left"
         }`}
       >
         {showSearch && <Search />}

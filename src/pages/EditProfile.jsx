@@ -20,6 +20,11 @@ function EditProfile() {
   const [username, setUsername] = useState("");
   const [uploadImage, setUploadImage] = useState(false);
   const [uploadBio, setUploadBio] = useState("");
+
+
+
+  //* set name, bio , username to input filed 
+
   useEffect(() => {
     if (selector.username == "") {
       return;
@@ -34,6 +39,9 @@ function EditProfile() {
     setBio(e.target.value);
   };
 
+
+  //** Handle Update to database
+
   async function handleSubmit() {
     const formattedBio = bio.replace(/\n/g, "<br/>");
     console.log(`username : ${username} name : ${name}  bio : ${formattedBio}`);
@@ -44,7 +52,8 @@ function EditProfile() {
         selector.databaseId,
         username,
         formattedBio,
-        name
+        name,
+        selector.profileImageId
       );
       console.log("UPDATE NAME");
       let updateName = await AppwriteUpdateName(name);
@@ -54,7 +63,7 @@ function EditProfile() {
           username: promise.username,
           bio: promise.bio,
           id: promise.$id,
-          name:promise.name
+          name: promise.name,
         })
       );
     } else {
@@ -63,7 +72,8 @@ function EditProfile() {
         username,
         bio,
         selector.profileImageUrl,
-        name
+        name,
+        selector.profileImageId
       );
       console.log("UPDATE NAME");
       let updateName = await AppwriteUpdateName(name);
@@ -73,12 +83,12 @@ function EditProfile() {
           username: promise.username,
           bio: promise.bio,
           id: promise.$id,
-          name: promise.name
+          name: promise.name,
         })
       );
     }
 
-    navigate("/profile");
+    navigate(`/${selector.username}`);
   }
 
   function handleUpload() {

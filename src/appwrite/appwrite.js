@@ -87,7 +87,14 @@ async function getUserDetails(email) {
 
 //update userdetails
 
-async function updateUserDetails(id, username, bio, imageUrl, name) {
+async function updateUserDetails(
+  id,
+  username,
+  bio,
+  imageUrl,
+  name,
+  profileImageId
+) {
   let promise = await databases.updateDocument(
     conf.appwriteDatabase,
     conf.appwriteUsernamecollection,
@@ -97,6 +104,7 @@ async function updateUserDetails(id, username, bio, imageUrl, name) {
       bio: bio,
       profileImage: imageUrl,
       name: name,
+      profileImageId: profileImageId,
     }
   );
   return promise;
@@ -116,104 +124,59 @@ async function getProfileImage(id) {
 
 //TODO: make a search option with the help of debounce and appwrite list documents
 
-//  async function searchUser(Query) {
-//   const promise = await databases.listDocuments(
-//     conf.appwriteDatabase ,
-//     conf.appwriteUsernamecollection,
-//     [  Query.search('name', Query),
-//       Query.search('username', Query),]
-//   )
-//   return promise.documents
-//  }
-
-// async function searchUser(query) {
-//   try {
-//     const promise = await databases.listDocuments(
-//       conf.appwriteDatabase,
-//       conf.appwriteUsernamecollection,
-//       [
-//         Query.search('username', query),
-//         Query.search('name', query),
-//       ]
-//     );
-//     console.log(promise);
-
-//     return promise.documents;
-//   } catch (error) {
-//     console.error('Error fetching documents:', error);
-//     throw error; // or handle the error as needed
-//   }
-// }\
-
-// async function searchUser(query) {
-//   try {
-//     // Search by username
-//     const usernamePromise = await databases.listDocuments(
-//       conf.appwriteDatabase,
-//       conf.appwriteUsernamecollection,
-//       [Query.search("username", query)]
-//     );
-//     console.log("username", usernamePromise);
-
-//     // Search by name
-//     const namePromise = await databases.listDocuments(
-//       conf.appwriteDatabase,
-//       conf.appwriteUsernamecollection,
-//       [Query.search("name", query)]
-//     );
-//     console.log("name : ", namePromise);
-
-//     // Combine or compare the results
-//     const usernameResults = usernamePromise.documents;
-//     const nameResults = namePromise.documents;
-
-//     // Combine unique users (optional, depends on requirements)
-//     const combinedResults = [
-//       ...new Map(
-//         [...usernameResults, ...nameResults].map((item) => [item.$id, item])
-//       ).values(),
-//     ];
-
-//     return combinedResults;
-//   } catch (error) {
-//     console.error("Error fetching documents:", error);
-//     throw error; // or handle the error as needed
-//   }
-// }
-
 async function searchUser(query) {
   try {
-    // First, search by name
+    // Search by username
+    const usernamePromise = await databases.listDocuments(
+      conf.appwriteDatabase,
+      conf.appwriteUsernamecollection,
+      [Query.search("username", query)]
+    );
+    console.log("username", usernamePromise);
+
+    // Search by name
     const namePromise = await databases.listDocuments(
       conf.appwriteDatabase,
       conf.appwriteUsernamecollection,
       [Query.search("name", query)]
     );
-    console.log("name results: ", namePromise);
+    console.log("name : ", namePromise);
 
-    // Check if there are results for name search
-    if (namePromise.documents.length > 0) {
-      // If name search has results, return them
-      return namePromise.documents;
-    } else {
-      // If name search returns 0 results, search by username
-      const usernamePromise = await databases.listDocuments(
-        conf.appwriteDatabase,
-        conf.appwriteUsernamecollection,
-        [Query.search("username", query)]
-      );
-      console.log("username results: ", usernamePromise);
+    // Combine or compare the results
+    const usernameResults = usernamePromise.documents;
+    const nameResults = namePromise.documents;
 
-      return usernamePromise.documents; // Return username results if no name match
-    }
+    // Combine unique users (optional, depends on requirements)
+    const combinedResults = [
+      ...new Map(
+        [...usernameResults, ...nameResults].map((item) => [item.$id, item])
+      ).values(),
+    ];
+
+    return combinedResults;
   } catch (error) {
     console.error("Error fetching documents:", error);
     throw error; // or handle the error as needed
   }
 }
+//* Delete the previous profile image
+
+async function deleteProfileImage(id) {
+  const promise = storage.deleteFile(conf.appwriteBucket, id);
+  console.log(promise);
+  return promise;
+}
 
 
-
+//* Details of searched user 
+async function fetchUserProfile(id) {
+  const promise = await databases.getDocument(
+    conf.appwriteDatabase ,
+    conf.appwriteUsernamecollection ,
+    id
+  )
+  return promise
+}
 
 
 
@@ -229,4 +192,6 @@ export {
   AppwriteUpdateName,
   AppwriteGet,
   updateUserDetails,
+  deleteProfileImage,
+  fetchUserProfile
 };

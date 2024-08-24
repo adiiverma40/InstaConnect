@@ -8,8 +8,9 @@ const initialState = {
     bio:'' ,
     databaseId :'',
     profileImageId:'',
-    profileImageUrl:''
-
+    profileImageUrl:'',
+    viewUserId :"" ,
+    isSearch : false
 }
 
 export const AuthSlice = createSlice({
@@ -39,9 +40,15 @@ export const AuthSlice = createSlice({
         profileImage : (state , action) =>{
           state.profileImageId = action.payload.profileImageId
           state.profileImageUrl = action.payload.profileImageUrl
+        },
+        viewUser : (state , action) =>{
+          state.viewUserId = action.payload.viewUserId
+        },
+        toggleSearch : (state , action ) =>  {
+            state.isSearch = action.payload.search
         }
       }
 })
 
-export const {login ,profileImage, logout , userdetails} = AuthSlice.actions
+export const { toggleSearch ,login ,profileImage, logout , userdetails , viewUser} = AuthSlice.actions
 export default AuthSlice.reducer

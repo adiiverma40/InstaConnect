@@ -1,14 +1,17 @@
 import React,{useState , useCallback} from "react";
 import { Input } from "../Components";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import debounce from "lodash/debounce";
 import { searchUser } from "../appwrite/appwrite";
+import { useNavigate } from "react-router-dom";
+import { toggleSearch, viewUser } from "../store/authSlice";
 
 function Search() {
-  const selector = useSelector((state) => state.auth);
+  const dispatch = useDispatch()
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
-
+  const navigate = useNavigate()
+  const selector = useSelector((state) => state.auth)
   const handleSearch = async (query) => {
     if (query.length > 0) {
       console.log(query)
@@ -31,21 +34,17 @@ function Search() {
     debouncedSearch(value);
   };
 
-  // return (
-  //   <div>
-  //     <input
-  //       type="text"
-  //       value={query}
-  //       onChange={onChange}
-  //       placeholder="Search users..."
-  //     />
-  //     <ul>
-  //       {results.map((user) => (
-  //         <li key={user.$id}>{user.name} ({user.username})</li>
-  //       ))}
-  //     </ul>
-  //   </div>
-  // );
+
+  function navigateUser(id , username ,email){
+    dispatch(toggleSearch({search : false}))
+    dispatch(viewUser({viewUserId : id }))
+    console.log(selector.isSearch);
+    
+    navigate(`/${username}`)
+  }
+
+
+
   return (
     <div
       className="w-full max-w-md border border-black rounded-t-lg rounded-b-lg bg-white shadow-lg"
@@ -65,7 +64,9 @@ function Search() {
       <div>
         <ul className="mt-3">
           {results.map((user) => (
-               <li key={user.$id} className="hover:bg-gray-300 py-4 hover:cursor-pointer flex items-center px-4">
+               <li key={user.$id} 
+               onClick={() =>  navigateUser(user.$id , user.username , user.email)}
+               className="hover:bg-gray-300 py-4 hover:cursor-pointer flex items-center px-4">
                <img
                  src={user.profileImage}
                  alt="Profile"
