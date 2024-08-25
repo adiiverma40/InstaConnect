@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import {createBrowserRouter, createRoutesFromElements ,Route,RouterProvider} from 'react-router-dom'
-import {Login , SignUp, Home, Profile, Search, ViewProfile} from "./pages/index.js"
+import {Login , SignUp, Home, Profile, Search} from "./pages/index.js"
 import EditProfile from './pages/EditProfile.jsx'
 
 

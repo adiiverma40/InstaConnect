@@ -50,17 +50,15 @@ function LeftMenu() {
     { to: "/create", icon: icons.create, text: "Create" },
   ];
 
-  // Function to handle menu click
   const handleMenuClick = (menu) => {
     if (menu === "Search") {
-      setShowSearch((prev) => !prev); // Toggle the visibility of the search component
-      setActiveMenu((prev) => (prev === "Search" ? "" : "Search")); // Toggle active menu
+      dispatch(toggleSearch({ search: !selector.isSearch })); // Toggle the search state in Redux
     } else {
-      setActiveMenu(""); // Reset the state when other menus are clicked
-      setShowSearch(false); // Hide search component
+      // Reset the search state when any other menu is clicked
+      if (selector.isSearch) dispatch(toggleSearch({ search: false }));
     }
   };
- 
+  
   function toProfile(){
     dispatch(toggleSearch({search : false}))
     dispatch(viewUser({viewUserId : selector.username }))
@@ -129,10 +127,10 @@ function LeftMenu() {
       {/* Conditionally render the Search component with animation */}
       <div
         className={`absolute top-0 left-full w-96 z-10 transition-transform ${
-          showSearch ? "animate-slide-in-left" : "animate-slide-out-left"
+          selector.isSearch ? "animate-slide-in-left" : "animate-slide-out-left"
         }`}
       >
-        {showSearch && <Search />}
+        {selector.isSearch && <Search />}
       </div>
     </div>
   );

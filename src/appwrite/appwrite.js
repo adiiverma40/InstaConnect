@@ -64,7 +64,6 @@ async function createUserDetails(userName, bio, email, name) {
       name: name,
     }
   );
-  console.log(promise);
   return promise;
 }
 
@@ -132,7 +131,7 @@ async function searchUser(query) {
       conf.appwriteUsernamecollection,
       [Query.search("username", query)]
     );
-    console.log("username", usernamePromise);
+   
 
     // Search by name
     const namePromise = await databases.listDocuments(
@@ -140,7 +139,7 @@ async function searchUser(query) {
       conf.appwriteUsernamecollection,
       [Query.search("name", query)]
     );
-    console.log("name : ", namePromise);
+  
 
     // Combine or compare the results
     const usernameResults = usernamePromise.documents;
@@ -163,7 +162,6 @@ async function searchUser(query) {
 
 async function deleteProfileImage(id) {
   const promise = storage.deleteFile(conf.appwriteBucket, id);
-  console.log(promise);
   return promise;
 }
 
@@ -178,9 +176,94 @@ async function fetchUserProfile(id) {
   return promise
 }
 
+//* Following and Follower 
+async function followFollowing(followerID , followingId) {
+  const promise = databases.createDocument(
+    conf.appwriteDatabase ,
+    conf.appwriteFollowsCollection ,
+    ID.unique(),{
+      followerId: followerID,
+      followingId: followingId,
+      followedAt: new Date().toISOString()
+    }
+  )
+
+  return promise
+  
+}
 
 
-export {
+//* get Following list
+async function followingList(followerId) {
+  const promise = await databases.listDocuments(
+    conf.appwriteDatabase,
+    conf.appwriteFollowsCollection,
+    [Query.equal('followerId', followerId)]
+
+  )
+  return promise
+}
+
+
+//* get Follower list
+async function followerList(followingId) {
+  const promise = await databases.listDocuments(
+    conf.appwriteDatabase,
+    conf.appwriteFollowsCollection,
+    [Query.equal('followingId', followingId)] 
+
+  )
+  return promise
+}
+
+//* get Users info by username 
+async function fetchUserByUsername(username) {
+  const promise = databases.listDocuments(
+    conf.appwriteDatabase ,
+    conf.appwriteUsernamecollection ,
+    [Query.equal("username" , username)]
+  )
+  return promise
+}
+
+//* check if user has followed or not
+
+async function checkFollowStatus(followerId, followingId) {
+  try {
+    const response = await databases.listDocuments(
+      conf.appwriteDatabase,
+      conf.appwriteFollowsCollection,
+      [
+        Query.equal('followerId', followerId),
+        Query.equal('followingId', followingId)
+      ]
+    );
+
+    
+    return response // If length > 0, the user has followed the account
+  } catch (error) {
+    console.error("Error checking follow status:", error);
+    return false; // Return false in case of error
+  }
+}
+
+async function unfollowUser(id) {
+  let promise = databases.deleteDocument(
+    conf.appwriteDatabase,
+    conf.appwriteFollowsCollection,
+    id
+  )
+  return promise
+}
+
+
+export { 
+  unfollowUser,
+  checkFollowStatus,
+  fetchUserByUsername,
+  followerList,
+  followingList,
+  followFollowing,
   searchUser,
   uploadProfileImage,
   getProfileImage,

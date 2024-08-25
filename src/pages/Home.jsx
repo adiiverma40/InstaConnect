@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { LeftMenu } from "../Components";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getUserDetails } from "../appwrite/appwrite";
-import { profileImage, userdetails } from "../store/authSlice";
+import { AppwriteGet, getUserDetails } from "../appwrite/appwrite";
+import { profileImage, userdetails , login} from "../store/authSlice";
 function Home() {
   const selector = useSelector((state) => state.auth);
   const navigate = useNavigate();
@@ -13,12 +13,9 @@ function Home() {
   //TODO: or just get profile Image
 
   useEffect(() => {
-    console.log("useEffect");
     async function getDetails() {
-      console.log("getDetails");
       if (selector.status && selector.userData) {
         const promise = await getUserDetails(selector.userData.email);
-        console.log(promise);
         if (
           promise.username !== selector.username ||
           promise.name !== selector.name||
@@ -62,11 +59,30 @@ function Home() {
     dispatch,
     navigate
   ]);
-
   useEffect(() => {
-    if (selector.status) return;
-    else navigate("/");
-  }, [navigate, selector.status, selector.userData]);
+    async function checkLogin() {
+      try {
+        const promise = await AppwriteGet();
+        if (promise) {
+          dispatch(login({ userData: promise }));
+        } else {
+          console.log("Home else");
+          
+          alert("Please Login");
+          navigate('/');
+        }
+      } catch (error) {
+        console.error("Error during login check:", error);
+      }
+    }
+  
+    // Check if `selector.userData` is available and its `status`
+    if (!selector.userData || selector.userData.status !== true) {
+      checkLogin();
+      console.log("Checked login");
+    }
+  }, [navigate, selector.userData, dispatch]);
+  
 
   return (
     <div className="flex">
@@ -77,3 +93,8 @@ function Home() {
 }
 
 export default Home;
+
+
+
+// TODO: remove the search bar after clicking on any users profile
+// * Rest is Rest 
