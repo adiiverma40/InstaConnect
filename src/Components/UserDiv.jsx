@@ -50,7 +50,7 @@ function UserDiv({ onClose, header, users = [], username }) {
 
   return (
     <div
-      className='bg-white shadow-lg border border-black rounded absolute w-2/5 h-1/2'
+      className='bg-white shadow-lg border border-black rounded absolute w-2/5 h-3/4'
       style={{ top: "20%", left: "36%" }}
     >
       <button
@@ -60,10 +60,10 @@ function UserDiv({ onClose, header, users = [], username }) {
       >
         &times;
       </button>
-      <div className="p-4">
+      <div className="p-4 h-3/4">
         <h3 className='text-center font-bold text-xl pb-3'>{header}</h3>
         <hr />
-        <div className='mt-2 p-2'>
+        <div className='mt-2 p-2 overflow-y-scroll h-full' >
           <ul>
             {usersData.map(data => (
               <li key={nanoid()} className="hover:bg-gray-300 py-4 hover:cursor-pointer flex items-center px-4">

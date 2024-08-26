@@ -116,8 +116,8 @@ async function uploadProfileImage(file) {
 }
 
 //get Image from bucket
-async function getProfileImage(id) {
-  const promise = await storage.getFileView(conf.appwriteBucket, id);
+async function getProfileImage(id , bucketId = conf.appwriteBucket) {
+  const promise = await storage.getFileView(bucketId, id);
   return promise;
 }
 
@@ -256,8 +256,32 @@ async function unfollowUser(id) {
   return promise
 }
 
+async function uploadPost(file) {
+  let promise = await storage.createFile(conf.appwritePostsBucket , ID.unique(), file)
+  let url = await getProfileImage( promise.$id , conf.appwritePostsBucket )
+  return {
+    promise,
+    url
+  };
+}
+
+async function uploadPostContent(username , caption , postImage , postImageId ) {
+    let promise = databases.createDocument(conf.appwriteDatabase,
+      conf.appwritePostsDatabase , //*collection,
+      ID.unique(),
+      {
+        "username" : username ,
+        "caption" : caption ,
+        "postImage" : postImage ,
+        "postImageId" : postImageId
+      } 
+    )
+    return promise
+}
 
 export { 
+  uploadPostContent,
+  uploadPost,
   unfollowUser,
   checkFollowStatus,
   fetchUserByUsername,

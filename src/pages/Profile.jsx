@@ -79,6 +79,8 @@ function Profile() {
   useEffect(()=>{
     async function followersFollowing() {
       let following = await followingList(username)
+      console.log(following);
+      
       let follower = await followerList(username)
       setFollower(follower.documents.length)
       setFollowing(following.documents.length)

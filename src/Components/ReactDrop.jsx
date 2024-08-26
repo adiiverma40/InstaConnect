@@ -47,6 +47,7 @@ function ReactDrop() {
       // Upload the file to Appwrite storage bucket
       console.log(file);
       console.log("Uploading File.....");
+      console.log(file);
       
       const promise = await uploadProfileImage(file);
       console.log(promise);

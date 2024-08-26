@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import PopupOver from "../PopupOver";
 import Search from "../../pages/Search";
 import { toggleSearch, viewUser } from "../../store/authSlice";
+import { CreatePost } from "../../pages";
 
 function LeftMenu() {
   const selector = useSelector((state) => state.auth);
@@ -14,24 +14,22 @@ function LeftMenu() {
   const [activeMenu, setActiveMenu] = useState(""); // State to track the active menu
   const navigate = useNavigate();
   const [showSearch, setShowSearch] = useState(false);
-  const dispatch = useDispatch()
-
-  useEffect(() =>{
-    console.log("toggle search");
-    
-    if(selector.isSearch){
-      setShowSearch(true)
-      console.log("true");
-      
-    }else {setShowSearch(false)
-      console.log("false");
-      
-    }
-
-  } , [selector.isSearch])
-
-
+  const dispatch = useDispatch();
+  const [createPost, setCreatePost] = useState(false);
   
+
+  useEffect(() => {
+
+
+    if (selector.isSearch) {
+      setShowSearch(true);
+   
+    } else {
+      setShowSearch(false);
+ 
+    }
+  }, [selector.isSearch]);
+
   useEffect(() => {
     if (selector.profileImageUrl !== "") {
       setProfilePic(selector.profileImageUrl);
@@ -47,27 +45,31 @@ function LeftMenu() {
     { to: "/reels", icon: icons.reels, text: "Reels" },
     { to: "/messages", icon: icons.chats, text: "Messages" },
     { to: "/notifications", icon: icons.notification, text: "Notifications" },
-    { to: "/create", icon: icons.create, text: "Create" },
+    { to: "", icon: icons.create, text: "Create" },
   ];
 
   const handleMenuClick = (menu) => {
+  
+
     if (menu === "Search") {
       dispatch(toggleSearch({ search: !selector.isSearch })); // Toggle the search state in Redux
+    } else if (menu === "Create") {
+
+      setCreatePost(true);
     } else {
       // Reset the search state when any other menu is clicked
       if (selector.isSearch) dispatch(toggleSearch({ search: false }));
     }
   };
-  
-  function toProfile(){
-    dispatch(toggleSearch({search : false}))
-    dispatch(viewUser({viewUserId : selector.username }))
-    navigate(`/${selector.username}`)
-    
+
+  function toProfile() {
+    dispatch(toggleSearch({ search: false }));
+    dispatch(viewUser({ viewUserId: selector.username }));
+    navigate(`/${selector.username}`);
   }
-
-
-  
+  function closeCreate(){
+    setCreatePost(false)
+  }
   return (
     <div
       className="relative h-screen border-r border-dashed border-black"
@@ -95,8 +97,8 @@ function LeftMenu() {
           {/* Profile Menu Item */}
           <li className="mx-8 mt-2 text-black font-semibold text-lg rounded p-3 transition-colors duration-200 hover:bg-gray-300 hover:cursor-pointer">
             <NavLink
-            onClick={toProfile}
-            // Use the username dynamically from Redux store
+              onClick={toProfile}
+              // Use the username dynamically from Redux store
               className="flex items-center"
             >
               <img
@@ -124,7 +126,6 @@ function LeftMenu() {
         </PopupOver>
       </div>
 
-      {/* Conditionally render the Search component with animation */}
       <div
         className={`absolute top-0 left-full w-96 z-10 transition-transform ${
           selector.isSearch ? "animate-slide-in-left" : "animate-slide-out-left"
@@ -132,8 +133,17 @@ function LeftMenu() {
       >
         {selector.isSearch && <Search />}
       </div>
+
+      {createPost && (
+        <div className="absolute top-0 left-0 w-screen h-screen backdrop-blur flex items-center inset-0 flexitems-center justify-center border border-red-500">
+          <span className="text-2xl hover:cursor-pointer absolute top-10 " onClick={closeCreate} style={{left:'85%'}}>X</span>
+          <CreatePost create={createPost}/>
+        </div>
+      )}
     </div>
   );
 }
 
+
+//TODO: Navigating to /create due to pramas, solve the issue
 export default LeftMenu;
