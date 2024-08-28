@@ -72,7 +72,7 @@ function LeftMenu() {
   }
   return (
     <div
-      className="relative h-screen border-r border-dashed border-black"
+      className="fixed h-screen border-r border-dashed border-black"
       style={{ width: "16%" }}
     >
       <h2 className="pt-12 mx-8 font-bold text-lg">InstaConnect</h2>

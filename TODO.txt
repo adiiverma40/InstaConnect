@@ -1,0 +1,4 @@
+TODO:   Add Posts to Profile Page
+TODO:   fix the issue when you try to upload from home 
+TODO:   Remove Logs that is not in use
+TODO:   Add a Like Option in posts

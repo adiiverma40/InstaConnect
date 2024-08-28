@@ -195,11 +195,10 @@ function CreatePost() {
         <div className=" mx-2  h-full w-full">
           <div className="flex justify-evenly h-11 items-center border border-b-2 shadow-md">
             <h3 className="text-center w-3/4 text-lg">Create New Post</h3>
-            <HeadlessButton
-              text={"Share"}
-              onclick={uploadPostFn}
-              className={"hover:bg-white bg-white mt-0 pt-0  text-blue-500"}
-            />
+            <button
+              onClick={uploadPostFn}
+              className={"hover:bg-white bg-white text-blue-500 mt-0 pt-0 "}
+            >Share</button>
           </div>
           <div
             className="flex  mt-3 justify-center "

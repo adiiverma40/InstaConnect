@@ -69,16 +69,25 @@ async function createUserDetails(userName, bio, email, name) {
 
 // Get user Details from DataBase
 //TODO: check
-async function getUserDetails(email) {
+async function getUserDetails(email , username ="") {
   try {
+    if (username === "") {
     const promise = await databases.listDocuments(
       conf.appwriteDatabase,
       conf.appwriteUsernamecollection,
       [Query.equal("email", email)] // Query that matches the email attribute
     );
-
-    // Return the first document (assuming email is unique)
     return promise.documents[0];
+  }
+  else{
+    const promise = await databases.listDocuments(
+      conf.appwriteDatabase,
+      conf.appwriteUsernamecollection,
+      [Query.equal("username", username)] // Query that matches the email attribute
+    );
+    return promise.documents[0].profileImage
+  }
+    // Return the first document (assuming email is unique)
   } catch (error) {
     console.error("Failed to fetch user details:", error);
   }
@@ -278,8 +287,40 @@ async function uploadPostContent(username , caption , postImage , postImageId ) 
     )
     return promise
 }
+//* Fetch Post from dataBase
+async function posts(lastPostId = '' , queryLimit = 10) {
+  if (lastPostId === '') {
+    let promise = await databases.listDocuments(
+      conf.appwriteDatabase ,
+      conf.appwritePostsDatabase ,
+      [
+        Query.limit(queryLimit),
+  
+      ]
+    )
+
+    console.log(promise);
+    
+    return promise
+  } else {
+    let promise = await databases.listDocuments(
+      conf.appwriteDatabase ,
+      conf.appwritePostsDatabase ,
+      [
+        Query.limit(queryLimit),
+        Query.cursorAfter(lastPostId)
+      ]
+    )
+    console.log(promise);
+    
+    return promise
+  }
+
+}
+
 
 export { 
+  posts,
   uploadPostContent,
   uploadPost,
   unfollowUser,
