@@ -106,7 +106,7 @@ function CreatePost() {
   
   return (
     <div
-      className={`transition-container ${
+      className={`transition-container z-50 ${
         upload ? "uploaded" : "not-uploaded"
       } ${
         upload ? "" : "p-4"
@@ -116,7 +116,7 @@ function CreatePost() {
         <div
           {...getRootProps({
             className:
-              "dropzone border-dashed border-2 border-gray-400 p-4 w-full h-full flex items-center justify-center",
+              "dropzone  border-dashed border-2 border-gray-400 p-4 w-full h-full flex items-center justify-center",
           })}
         >
           <input {...getInputProps()} />

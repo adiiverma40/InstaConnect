@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { HeadlessButton, LeftMenu, UserDiv } from "../Components";
+import { HeadlessButton, LeftMenu, PostCard, UserDiv } from "../Components";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -10,6 +10,7 @@ import {
   followFollowing,
   followingList,
   getUserDetails,
+  posts,
   unfollowUser,
 } from "../appwrite/appwrite";
 import { profileImage, userdetails , login} from "../store/authSlice";
@@ -31,6 +32,14 @@ function Profile() {
   const [documentId , setDocumentId] = useState('')
   const [followers , setFollower] = useState(0)
   const [following , setFollowing] = useState(0)
+  const [totalPost , setTotalPost] = useState(0)
+  const [postsDetails , setPosts] = useState([])
+
+  useEffect(()=>{
+    setPosts([])
+  },[navigate , username])
+
+
   useEffect(() => {
     async function checkLogin() {
       try {
@@ -78,9 +87,7 @@ function Profile() {
 
   useEffect(()=>{
     async function followersFollowing() {
-      let following = await followingList(username)
-      console.log(following);
-      
+      let following = await followingList(username) 
       let follower = await followerList(username)
       setFollower(follower.documents.length)
       setFollowing(following.documents.length)
@@ -166,14 +173,24 @@ function Profile() {
 
 
   useEffect(()=>{
-
-  }, [])
+    async function LoadPost() {
+      console.log(username);
+      let promise = await posts('' , 1 , username)
+      setTotalPost(promise.documents.length)
+      console.log("PostImage",promise.documents);
+      setPosts(prev => [...prev , promise])
+      
+    }
+    
+    LoadPost()
+    
+  }, [navigate , selector.username , username , selector.deletedPost])
 
   return (
-    <div className="flex">
+    <div className="flex h-screen">
       <LeftMenu />
-      <div className="" style={{ width: "84%" }}>
-        <div className="flex pt-12 justify-center w-full h-1/2">
+      <div className="h-full" style={{ width: "100%" }}>
+        <div className="flex mb-5 pt-12 justify-center w-full h-2/5">
           <div className="mx-12">
             <img
               src={image}
@@ -222,7 +239,7 @@ function Profile() {
               )}
             </div>
             <div className="flex ">
-              <p className="mt-4 mb-4 hover:cursor-pointer">8 Posts</p>
+              <p className="mt-4 mb-4 hover:cursor-pointer">{totalPost} Posts</p>
               <p
                 className="ml-10 mt-4 mb-4 hover:cursor-pointer"
                 onClick={showFollowerFn}
@@ -243,15 +260,34 @@ function Profile() {
             </div>
           </div>
         </div>
+      
+      
+      
+          <hr className="border border-black w-2/3"  style={{marginLeft:'23%'}}/>
+        <div className="w-2/3 " style={{marginLeft:'23%'}}>
+          <h2 className="font-semibold pt-2 text-center text-lg hover:cursor-pointer bg-slate-100 pl-3 h-10 rounded">Posts</h2>
+          {postsDetails.map((src, index) => (
+    src.documents.map((doc, docIndex) => (
+      doc.postImage.map((image, imgIndex) => (
+        <PostCard postsDetails={doc} key={`${index}-${docIndex}-${imgIndex}`} src={image} />
+      ))
+    ))
+  ))}
+              
+            
+
+        </div>
       </div>
+
       {showFollower && (
         <UserDiv
-          onClose={onClose}
-          header={header}
-          username={username}
-          users={showUsersArray}
+        onClose={onClose}
+        header={header}
+        username={username}
+        users={showUsersArray}
         />
       )}
+      
     </div>
   );
 }

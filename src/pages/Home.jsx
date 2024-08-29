@@ -173,7 +173,7 @@ function Home() {
       <LeftMenu />
 
       <div
-        className="master absolute  ml-1/6 flex-1 overflow-y-auto"
+        className="master absolute -z-10  ml-1/6 flex-1 overflow-y-auto"
         style={{ width: "84%", left: "16%" }}
       >
         <InfiniteScroll

@@ -69,24 +69,23 @@ async function createUserDetails(userName, bio, email, name) {
 
 // Get user Details from DataBase
 //TODO: check
-async function getUserDetails(email , username ="") {
+async function getUserDetails(email, username = "") {
   try {
     if (username === "") {
-    const promise = await databases.listDocuments(
-      conf.appwriteDatabase,
-      conf.appwriteUsernamecollection,
-      [Query.equal("email", email)] // Query that matches the email attribute
-    );
-    return promise.documents[0];
-  }
-  else{
-    const promise = await databases.listDocuments(
-      conf.appwriteDatabase,
-      conf.appwriteUsernamecollection,
-      [Query.equal("username", username)] // Query that matches the email attribute
-    );
-    return promise.documents[0].profileImage
-  }
+      const promise = await databases.listDocuments(
+        conf.appwriteDatabase,
+        conf.appwriteUsernamecollection,
+        [Query.equal("email", email)] // Query that matches the email attribute
+      );
+      return promise.documents[0];
+    } else {
+      const promise = await databases.listDocuments(
+        conf.appwriteDatabase,
+        conf.appwriteUsernamecollection,
+        [Query.equal("username", username)] // Query that matches the email attribute
+      );
+      return promise.documents[0].profileImage;
+    }
     // Return the first document (assuming email is unique)
   } catch (error) {
     console.error("Failed to fetch user details:", error);
@@ -125,7 +124,7 @@ async function uploadProfileImage(file) {
 }
 
 //get Image from bucket
-async function getProfileImage(id , bucketId = conf.appwriteBucket) {
+async function getProfileImage(id, bucketId = conf.appwriteBucket) {
   const promise = await storage.getFileView(bucketId, id);
   return promise;
 }
@@ -140,7 +139,6 @@ async function searchUser(query) {
       conf.appwriteUsernamecollection,
       [Query.search("username", query)]
     );
-   
 
     // Search by name
     const namePromise = await databases.listDocuments(
@@ -148,7 +146,6 @@ async function searchUser(query) {
       conf.appwriteUsernamecollection,
       [Query.search("name", query)]
     );
-  
 
     // Combine or compare the results
     const usernameResults = usernamePromise.documents;
@@ -174,65 +171,60 @@ async function deleteProfileImage(id) {
   return promise;
 }
 
-
-//* Details of searched user 
+//* Details of searched user
 async function fetchUserProfile(id) {
   const promise = await databases.getDocument(
-    conf.appwriteDatabase ,
-    conf.appwriteUsernamecollection ,
+    conf.appwriteDatabase,
+    conf.appwriteUsernamecollection,
     id
-  )
-  return promise
+  );
+  return promise;
 }
 
-//* Following and Follower 
-async function followFollowing(followerID , followingId) {
+//* Following and Follower
+async function followFollowing(followerID, followingId) {
   const promise = databases.createDocument(
-    conf.appwriteDatabase ,
-    conf.appwriteFollowsCollection ,
-    ID.unique(),{
+    conf.appwriteDatabase,
+    conf.appwriteFollowsCollection,
+    ID.unique(),
+    {
       followerId: followerID,
       followingId: followingId,
-      followedAt: new Date().toISOString()
+      followedAt: new Date().toISOString(),
     }
-  )
+  );
 
-  return promise
-  
+  return promise;
 }
-
 
 //* get Following list
 async function followingList(followerId) {
   const promise = await databases.listDocuments(
     conf.appwriteDatabase,
     conf.appwriteFollowsCollection,
-    [Query.equal('followerId', followerId)]
-
-  )
-  return promise
+    [Query.equal("followerId", followerId)]
+  );
+  return promise;
 }
-
 
 //* get Follower list
 async function followerList(followingId) {
   const promise = await databases.listDocuments(
     conf.appwriteDatabase,
     conf.appwriteFollowsCollection,
-    [Query.equal('followingId', followingId)] 
-
-  )
-  return promise
+    [Query.equal("followingId", followingId)]
+  );
+  return promise;
 }
 
-//* get Users info by username 
+//* get Users info by username
 async function fetchUserByUsername(username) {
   const promise = databases.listDocuments(
-    conf.appwriteDatabase ,
-    conf.appwriteUsernamecollection ,
-    [Query.equal("username" , username)]
-  )
-  return promise
+    conf.appwriteDatabase,
+    conf.appwriteUsernamecollection,
+    [Query.equal("username", username)]
+  );
+  return promise;
 }
 
 //* check if user has followed or not
@@ -243,13 +235,12 @@ async function checkFollowStatus(followerId, followingId) {
       conf.appwriteDatabase,
       conf.appwriteFollowsCollection,
       [
-        Query.equal('followerId', followerId),
-        Query.equal('followingId', followingId)
+        Query.equal("followerId", followerId),
+        Query.equal("followingId", followingId),
       ]
     );
 
-    
-    return response // If length > 0, the user has followed the account
+    return response; // If length > 0, the user has followed the account
   } catch (error) {
     console.error("Error checking follow status:", error);
     return false; // Return false in case of error
@@ -261,65 +252,85 @@ async function unfollowUser(id) {
     conf.appwriteDatabase,
     conf.appwriteFollowsCollection,
     id
-  )
-  return promise
+  );
+  return promise;
 }
 
 async function uploadPost(file) {
-  let promise = await storage.createFile(conf.appwritePostsBucket , ID.unique(), file)
-  let url = await getProfileImage( promise.$id , conf.appwritePostsBucket )
+  let promise = await storage.createFile(
+    conf.appwritePostsBucket,
+    ID.unique(),
+    file
+  );
+  let url = await getProfileImage(promise.$id, conf.appwritePostsBucket);
   return {
     promise,
-    url
+    url,
   };
 }
 
-async function uploadPostContent(username , caption , postImage , postImageId ) {
-    let promise = databases.createDocument(conf.appwriteDatabase,
-      conf.appwritePostsDatabase , //*collection,
-      ID.unique(),
-      {
-        "username" : username ,
-        "caption" : caption ,
-        "postImage" : postImage ,
-        "postImageId" : postImageId
-      } 
-    )
-    return promise
+async function uploadPostContent(username, caption, postImage, postImageId) {
+  let promise = databases.createDocument(
+    conf.appwriteDatabase,
+    conf.appwritePostsDatabase, //*collection,
+    ID.unique(),
+    {
+      username: username,
+      caption: caption,
+      postImage: postImage,
+      postImageId: postImageId,
+    }
+  );
+  return promise;
 }
 //* Fetch Post from dataBase
-async function posts(lastPostId = '' , queryLimit = 10) {
-  if (lastPostId === '') {
-    let promise = await databases.listDocuments(
-      conf.appwriteDatabase ,
-      conf.appwritePostsDatabase ,
-      [
-        Query.limit(queryLimit),
-  
-      ]
-    )
 
+async function posts(lastPostId = "", queryLimit = 10, username = "") {
+  if (lastPostId === "" && username === "") {
+    let promise = await databases.listDocuments(
+      conf.appwriteDatabase,
+      conf.appwritePostsDatabase,
+      [Query.limit(queryLimit)]
+    );
     console.log(promise);
-    
-    return promise
+    return promise;
+  } else if (username !== "") {
+    let promise = await databases.listDocuments(
+      conf.appwriteDatabase,
+      conf.appwritePostsDatabase,
+      [Query.equal("username", username)]
+    );
+    console.log("Promise check for username", promise);
+    return promise;
   } else {
     let promise = await databases.listDocuments(
-      conf.appwriteDatabase ,
-      conf.appwritePostsDatabase ,
-      [
-        Query.limit(queryLimit),
-        Query.cursorAfter(lastPostId)
-      ]
-    )
+      conf.appwriteDatabase,
+      conf.appwritePostsDatabase,
+      [Query.limit(queryLimit), Query.cursorAfter(lastPostId)]
+    );
     console.log(promise);
-    
-    return promise
+    return promise;
   }
-
 }
 
+async function deletePosts(id , imageId ) {
+  let promise = await databases.deleteDocument(
+    conf.appwriteDatabase ,
+    conf.appwritePostsDatabase,
+    id
+  )
+  let response = await storage.deleteFile(
+    conf.appwritePostsBucket,
+    imageId
+    
+  )
+  if(promise && response) {
+    return "Deletetion succesfull"
+  }
+}
 
-export { 
+export {
+  deletePosts,
   posts,
   uploadPostContent,
   uploadPost,
@@ -341,5 +352,5 @@ export {
   AppwriteGet,
   updateUserDetails,
   deleteProfileImage,
-  fetchUserProfile
+  fetchUserProfile,
 };
