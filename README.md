@@ -1,7 +1,7 @@
 # InstaConnect
 
 InstaConnect is a social media platform inspired by Instagram, built with React and Firebase. Users can share photos and videos, follow other users, like and comment on posts, and interact with stories—all in real-time.
-
+## DM me if you having problem in code!!!
 ## Features
 
 - **User Authentication**
